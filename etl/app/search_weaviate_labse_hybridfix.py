@@ -11,6 +11,11 @@ import numpy as np
 
 from weaviate import WeaviateClient
 from weaviate.connect import ConnectionParams
+from sentence_transformers import SentenceTransformer
+import numpy as np
+
+MODEL_NAME = "sentence-transformers/LaBSE"
+_model = SentenceTransformer(MODEL_NAME)
 
 MODEL_NAME = "sentence-transformers/LaBSE"
 
@@ -21,9 +26,7 @@ def get_client(url: str, grpc_port: int) -> WeaviateClient:
     return client
 
 def encode_query_labse(text: str) -> np.ndarray:
-    from sentence_transformers import SentenceTransformer
-    model = SentenceTransformer(MODEL_NAME)
-    vec = model.encode([text], normalize_embeddings=False)  # keep consistent with stored vectors
+    vec = _model.encode([text], normalize_embeddings=False)  # keep consistent with stored vectors
     return vec.astype(np.float32)[0]
 
 def pick_return_props(coll_name: str) -> List[str]:
